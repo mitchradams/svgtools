@@ -1,0 +1,2 @@
+pyclipper==1.4.0
+svgpathtools==1.7.2
