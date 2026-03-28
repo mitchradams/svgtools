@@ -2,7 +2,7 @@
 
 from svgpathtools import svg2paths2, Path, wsvg, Line, Arc
 
-def load_svg_paths_from_file(filename : str) -> list[Path]:
+def load_svg_paths_from_file(filename : str):
     # Load and parse SVG paths from file
     paths, attributes, svg_attributes = svg2paths2(filename)
     return paths, [attributes, svg_attributes]
@@ -84,7 +84,7 @@ def paths_max_y(paths : list[Path]):
     return max(path_max_ys)
 
 # lays out groups of paths in a linear distribution
-def distribute_svg_path_layout(path_groups : list[list[Path]], space_between_each):
+def distribute_svg_path_group_layout(path_groups : list[list[Path]], space_between_each) -> list[list[Path]]:
     distributed_paths = []
     if not path_groups:
         return distributed_paths
