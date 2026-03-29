@@ -8,7 +8,9 @@ import utils.svg_utils as svg_utils
 def get_union_paths(paths: list[Path]) -> list[Path]:
     polygons = [svg_utils.svg_path_to_polygon(p) for p in paths]
 
-    SCALE = pyclipper.scale_to_clipper(1)
+    # pyclipper requires integer coordinates; multiply by a fixed scale factor
+    # to preserve sub-mm precision before rounding to int.
+    SCALE = 1000
     scaled = [pyclipper.scale_to_clipper(p, SCALE) for p in polygons]
 
     pc = pyclipper.Pyclipper()

@@ -10,8 +10,9 @@ def get_difference_paths(subject_path: Path,
     subj_poly = svg_utils.svg_path_to_polygon(subject_path)
     clip_polys = [svg_utils.svg_path_to_polygon(p) for p in clip_paths]
 
-    # pyclipper requires integer coordinates; scale up to preserve precision
-    SCALE = pyclipper.scale_to_clipper(1)
+    # pyclipper requires integer coordinates; multiply by a fixed scale factor
+    # to preserve sub-mm precision before rounding to int.
+    SCALE = 1000
     subj_scaled = pyclipper.scale_to_clipper(subj_poly, SCALE)
     clips_scaled = [pyclipper.scale_to_clipper(p, SCALE) for p in clip_polys]
 
