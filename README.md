@@ -4,10 +4,13 @@
 Takes a 2D SVG profile and generates a set of laser-cuttable flat panels that interlock to form a revolved solid. The number of panels equals the number of faces; interlocking slots are computed automatically from the material thickness.
  
 ### To Run
-```
-pip install -r requirements.txt
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -e .
 python3 construct_3d/revolve_about_axis.py
 ```
+This will run the algorithm on the test file. In the future this will be updated to allow for command line arguments.
  
 ### Current Assumptions
 - Input file contains exactly one path
