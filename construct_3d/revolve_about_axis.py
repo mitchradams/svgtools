@@ -48,27 +48,33 @@ def revolve_path_about_axis(path: Path, num_faces: int,
             for mask_list in mask_lists]
  
  
-def revolve_path_from_file_about_axis(filename: str, output_file: str,
-                                       num_faces: int,
-                                       material_thickness: float,
-                                       buffer: float) -> list[list[Path]]:
+def revolve_path_from_file_about_axis(filename: str, num_faces: int, material_thickness: float, 
+                                      buffer: float,
+                                      max_width: float | None = None) -> list[Path]:
     paths_from_file, metadata = svg_utils.load_svg_paths_from_file(filename)
     path_from_file = paths_from_file[0]  # currently assumes single path per file
  
     rotation_paths = revolve_path_about_axis(path_from_file, num_faces,
                                               material_thickness, buffer)
     distributed = svg_utils.distribute_svg_path_group_layout(rotation_paths,
-                                                              material_thickness)
-    svg_utils.save_svg_paths_to_file(sum(distributed, []), output_file,
-                                     stroke_width_mm=0.1)
-    return distributed
+                                                              material_thickness, 
+                                                              max_width)
+    return sum(distributed, [])
+
+def revolve_path_from_file_about_axis_and_save(filename: str, output_file: str,
+                                       num_faces: int,
+                                       material_thickness: float,
+                                       buffer: float,
+                                       max_width: float | None = None) -> None:
+    result = revolve_path_from_file_about_axis(filename, num_faces, material_thickness, buffer, max_width)
+    svg_utils.save_svg_paths_to_file(result, output_file, stroke_width_mm=0.4)
 
 def test():
     test_svg_file = './construct_3d/test_files/test_1.svg'
     test_output_file = '3d_revolve_test_result.svg'
     # Units in mm
-    revolve_path_from_file_about_axis(test_svg_file, test_output_file,
-                                       4, 3.175, 1.0)
+    revolve_path_from_file_about_axis_and_save(test_svg_file, test_output_file,
+                                       4, 3.175, 1.0, 300)
 
 import argparse
 
@@ -79,16 +85,18 @@ def main():
     parser.add_argument('--faces', type=int, choices=[2,4,8,16,32,64], required=True, help='Number of faces (must be 2, 4, 8, 16, 32, or 64)')
     parser.add_argument('--thickness', type=float, required=True, help='Material thickness in mm')
     parser.add_argument('--buffer', type=float, required=True, help='Buffer size in mm')
+    parser.add_argument('--max_width', type=float, default=None, help='Optional max width for layout distribution in mm')
 
     args = parser.parse_args()
 
     try:
-        revolve_path_from_file_about_axis(
+        revolve_path_from_file_about_axis_and_save(
             args.input_svg,
             args.output_svg,
             args.faces,
             args.thickness,
-            args.buffer
+            args.buffer,
+            args.max_width
         )
         print(f"Output saved to {args.output_svg}")
     except Exception as e:

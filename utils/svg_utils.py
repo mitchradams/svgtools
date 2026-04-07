@@ -294,29 +294,74 @@ def paths_max_y(paths: list[Path]) -> float:
 # ---------------------------------------------------------------------------
 
 def distribute_svg_path_group_layout(path_groups: list[list[Path]],
-                                     space_between_each: float) -> list[list[Path]]:
-    """Lay out groups of paths in a horizontal row, left-aligned, with a fixed gap."""
+                                     space_between_each: float,
+                                     max_width: float | None = None) -> list[list[Path]]:
+    """
+    Lay out groups of paths in a horizontal row, left-aligned, with a fixed gap, wrapping to a new row if max_width is exceeded.
+
+    Args:
+        path_groups: List of groups of svgpathtools Paths to lay out.
+        space_between_each: Horizontal/vertical gap between groups, in the same units as the path coordinates (typically mm).
+        max_width: Maximum width (in same units as paths, e.g. mm) for a row. If None, no wrapping occurs.
+
+    Returns:
+        List of lists of Paths, each group translated to its position in the layout.
+    """
     distributed: list[list[Path]] = []
     if not path_groups:
         return distributed
 
-    # Anchor: x/y of the first non-empty group
-    current_x = y = None
+    # Find x/y of the first non-empty group
+    current_x = current_y = None
     for group in path_groups:
         if group:
             current_x = paths_min_x(group)
-            y = paths_min_y(group)
+            current_y = paths_min_y(group)
             break
 
-    if current_x is None:
+    if current_x is None or current_y is None:
         return distributed
+    row_groups: list[list[Path]] = []
+    row_width = 0.0
+    max_row_height = 0.0
+
+    def flush_row():
+        nonlocal current_y, row_groups, row_width, max_row_height
+        # Lay out all groups in row_groups at current_y
+        x = current_x
+        for g in row_groups:
+            tx = x - paths_min_x(g)
+            ty = current_y - paths_min_y(g)
+            translated = [p.translated(complex(tx, ty)) for p in g]
+            distributed.append(translated)
+            x += paths_width(g) + space_between_each
+        # Prepare for next row
+        if row_groups:
+            tallest = max(paths_height(g) for g in row_groups)
+            current_y -= tallest + space_between_each
+        row_groups = []
+        row_width = 0.0
+        max_row_height = 0.0
 
     for group in path_groups:
-        if group:
-            tx = current_x - paths_min_x(group)
-            ty = y - paths_min_y(group)
-            translated = [p.translated(complex(tx, ty)) for p in group]
-            distributed.append(translated)
-            current_x += paths_width(group) + space_between_each
+        if not group:
+            continue
+        group_width = paths_width(group)
+        group_height = paths_height(group)
+        # If adding this group would exceed max_width, flush current row
+        if max_width is not None and row_groups:
+            projected_width = row_width + (space_between_each if row_width > 0 else 0) + group_width
+            if projected_width > max_width:
+                flush_row()
+        # Add group to current row
+        if row_width > 0:
+            row_width += space_between_each
+        row_groups.append(group)
+        row_width += group_width
+        max_row_height = max(max_row_height, group_height)
+
+    # Flush any remaining groups
+    if row_groups:
+        flush_row()
 
     return distributed
