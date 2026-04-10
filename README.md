@@ -38,6 +38,8 @@ pip install -e .
 python3 construct_3d/revolve_gui.py
 ```
 
+To run the GUI with a live preview, add the `--show-preview` option after the command. To run with a live preview, you will need the libraries Pillow and cairosvg. Note that cairosvg might require additional tools for installation depending on your OS. See their [installation guide](https://cairosvg.org/documentation/#installation) for more details.
+
 #### Run from command line
 
 ```
@@ -51,3 +53,34 @@ python3 construct_3d/revolve_about_axis.py input.svg output.svg --faces 4 --thic
 - Input file contains exactly one path
 - The number of faces is a power of 2
 - The axis of rotation is the center of the SVG path
+
+### Compile into an executable
+
+Prerequisite: pyinstaller
+
+<details>
+<summary>Windows</summary>
+
+```bat
+pyinstaller --noconsole --icon assets/revolve.ico --name "Laser Symmetry" --paths construct_3d --paths geometric_operations --paths utils construct_3d/revolve_gui.py
+```
+
+</details>
+
+<details>
+<summary>Linux</summary>
+
+```bash
+pyinstaller --windowed --icon assets/revolve.png --name "Laser Symmetry" --paths construct_3d --paths geometric_operations --paths utils construct_3d/revolve_gui.py
+```
+
+</details>
+
+<details>
+<summary>macOS</summary>
+
+```bash
+pyinstaller --windowed --icon assets/revolve.icns --name "Laser Symmetry" --paths construct_3d --paths geometric_operations --paths utils construct_3d/revolve_gui.py
+```
+
+</details>

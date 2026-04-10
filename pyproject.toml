@@ -8,8 +8,6 @@ version = "0.1.0"
 dependencies = [
     "svgpathtools", # tested on 1.4.0
     "pyclipper", # tested 1.7.2
-    "Pillow", # tested 12.1.1
-    "cairosvg", # tested 2.9.0
 ]
 
 [tool.setuptools.packages.find]
