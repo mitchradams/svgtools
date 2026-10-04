@@ -67,6 +67,8 @@ python3 construct_3d/revolve_about_axis.py -h
 
 Prerequisite: pyinstaller
 
+Also, make sure to have your environment set up with the application dependencies _before_ running pyinstaller (instructions above).
+
 <details>
 <summary>Windows</summary>
 
