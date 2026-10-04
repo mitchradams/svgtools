@@ -47,7 +47,7 @@ To run with a live preview, you will need the libraries Pillow and cairosvg inst
 #### Run from the command line
 
 ```
-python3 construct_3d/revolve_about_axis.py input.svg output.svg --faces 4 --thickness 3.175 --buffer 0.1 --max_width 400
+python3 construct_3d/revolve_about_axis.py input.svg output.svg --faces 4 --thickness 3.175 --buffer -0.125 --max_width 400
 ```
 
 Replace `input.svg` and `output.svg` with the input and output files, and replace, `4`, `3.175`, `0.1`, and `400` with the appropriate values for the number of cutouts to rotate (must be a factor of two), the thickness of the material, the extra thickness you would like to cut out of the material, and the maximum width the output layout should occupy before extending to a new row (or omit this parameter for no limit).

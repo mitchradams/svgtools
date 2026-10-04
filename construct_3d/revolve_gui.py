@@ -58,7 +58,7 @@ class RevolveGUI:
 
         # Buffer size
         tk.Label(root, text='Buffer size (mm):').grid(row=4, column=0, sticky='e')
-        self.buffer_var = tk.DoubleVar(value=0.1)
+        self.buffer_var = tk.DoubleVar(value=-0.125)
         tk.Entry(root, textvariable=self.buffer_var).grid(row=4, column=1, sticky='w')
 
         # Max width (optional)

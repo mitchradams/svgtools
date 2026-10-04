@@ -14,13 +14,13 @@ def generate_masks(num_faces: int, bottom_y: float, top_y: float,
         raise ValueError(f"Invalid number of faces: {num_faces}. Must be a power of 2.")
  
     mask_width = material_thickness / math.tan(math.pi / (2 * num_faces)) + buffer
-    mask_height = buffer + (top_y - bottom_y) / 2
+    mask_height = abs(buffer) + (top_y - bottom_y) / 2
     mask_origin_x = center_x - mask_width / 2
- 
+
     mask1 = shapes.rectangle(mask_width, mask_height,
-                              [mask_origin_x, bottom_y - buffer / 2])
+                              [mask_origin_x, bottom_y - abs(buffer) / 2])
     mask2 = shapes.rectangle(mask_width, mask_height,
-                              [mask_origin_x, bottom_y + mask_height - buffer / 2])
+                              [mask_origin_x, bottom_y + mask_height - abs(buffer) / 2])
  
     if num_faces == 2:
         return [[mask1], [mask2]]
@@ -84,7 +84,8 @@ def main():
     parser.add_argument('output_svg', help='Output SVG file path')
     parser.add_argument('--faces', type=int, choices=[2,4,8,16,32,64], required=True, help='Number of faces (must be 2, 4, 8, 16, 32, or 64)')
     parser.add_argument('--thickness', type=float, required=True, help='Material thickness in mm')
-    parser.add_argument('--buffer', type=float, required=True, help='Buffer size in mm')
+    parser.add_argument('--buffer', type=float, required=True,
+                        help='Slot clearance in mm; negative values make the gap narrower')
     parser.add_argument('--max_width', type=float, default=None, help='Optional max width for layout distribution in mm')
 
     args = parser.parse_args()
